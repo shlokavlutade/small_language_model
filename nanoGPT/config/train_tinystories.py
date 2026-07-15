@@ -1,15 +1,15 @@
 # Output
-out_dir = "out-tinystories"
-
+experiment = "baseline" 
+out_dir = f"/content/drive/MyDrive/thesis_data/results/{experiment}"
 
 # Evaluation
 # Final baseline:
-# eval_interval = 500
-# eval_iters = 200
+eval_interval = 500
+eval_iters = 200
 
 # Current test:
-eval_interval = 1000
-eval_iters = 50
+# eval_interval = 1000
+# eval_iters = 50
 
 
 # Logging
@@ -43,21 +43,20 @@ grad_clip = 1.0
 # Learning rate decay
 
 # Final baseline:
-# max_iters = 5000
-# warmup_iters = 100
-# lr_decay_iters = 5000
-# min_lr = 1e-4
-# decay_lr = True
-
-# Current test run:
-max_iters = 20
+max_iters = 5000
 warmup_iters = 100
 lr_decay_iters = 5000
 min_lr = 1e-4
 decay_lr = True
 
+# Current test run:
+# max_iters = 20
+# warmup_iters = 100
+# lr_decay_iters = 5000
+# min_lr = 1e-4
+# decay_lr = True
 
-# System (Google Colab GPU)
+# System
 device = "cuda"
 dtype = "float16"
 compile = True
