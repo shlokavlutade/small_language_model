@@ -1,14 +1,14 @@
 from pathlib import Path
-from config import DEFAULT_SEED, METADATA_FILE
+from .config import DEFAULT_SEED, METADATA_FILE
 
-from dataset_utils import (
+from .dataset_utils import (
     load_dataset_cached,
     prepare_training_dataset,
     save_dataset_to_txt,
     cleanup_temp_files
 )
-from tokenizer_utils import create_bin_files
-from metadata import create_metadata
+from .tokenizer_utils import create_bin_files
+from .metadata import create_metadata
 
 def prepare_dataset(
         experiment_name,

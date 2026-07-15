@@ -2,7 +2,7 @@ from pathlib import Path
 import numpy as np
 import tiktoken
 
-from config import TOKENIZER_NAME
+from .config import TOKENIZER_NAME
 
 def get_tokenizer():
     """Load GPT- 2 tokenizer using tiktoken"""
