@@ -4,7 +4,7 @@ from pathlib import Path
 
 from datasets import load_dataset, Dataset
 
-from config import(
+from .config import(
     HF_DATASET_NAME,
     HF_CACHE_DIR,
     TRAIN_TXT,
