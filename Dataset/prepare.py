@@ -26,11 +26,20 @@ def prepare_dataset(
     original_train_size = len(train_dataset)
     validation_size = len(val_dataset)
 
-    train_dataset = train_dataset.drop_duplicates(subset=["text"]).reset_index(drop=True)
+    # Remove natural duplicates first
+    seen = set()
+
+    def keep_unique(example):
+        text = example["text"]
+        if text in seen:
+            return False
+        seen.add(text)
+        return True
+
+    train_dataset = train_dataset.filter(keep_unique)
 
     processed_train = prepare_training_dataset(train_dataset, dataset_fraction,duplicate_ratio,
-                                                shuffle_ratio, seed).drop_duplicates(
-                                                    subset=["text"]).reset_index(drop=True)
+                                                shuffle_ratio, seed)
     final_train_size = len(processed_train)
     unique_train_size = len(set(processed_train["text"]))
 
