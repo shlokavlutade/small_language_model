@@ -50,7 +50,7 @@ def prepare_dataset(
                     val_bin=token_stats["val_bin"],
                     seed=seed)
     
-    cleanup_temp_files()
+    # cleanup_temp_files()
 
     print("Dataset preparation completed.")
 
