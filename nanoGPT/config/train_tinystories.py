@@ -1,6 +1,6 @@
 # Output
-experiment = "baseline" 
-out_dir= f"/kaggle/working/upload_results/training-results/{experiment}"
+dataset = "baseline"
+out_dir= f"/kaggle/working/upload_results/training-results/{dataset}"
 
 # Evaluation
 # Final baseline:
@@ -14,10 +14,6 @@ eval_iters = 200
 
 # Logging
 log_interval = 10
-
-
-# Dataset
-dataset = f"{experiment}"
 
 
 # Model architecture
