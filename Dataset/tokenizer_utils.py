@@ -13,76 +13,54 @@ def get_tokenizer():
 
 
 def tokenize_file(input_file, output_file):
-    """
-    Tokenize text file line-by-line and directly save tokens.
-    Avoids loading the complete dataset into memory.
-    """
 
     tokenizer = get_tokenizer()
 
     output_file = Path(output_file)
-    output_file.parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
+    output_file.parent.mkdir(parents=True, exist_ok=True)
 
     total_tokens = 0
     token_buffer = []
 
     print(f"Reading and tokenizing: {input_file}")
 
-    with open(
-        input_file,
-        "r",
-        encoding="utf-8"
-    ) as f:
+    with open(output_file, "wb") as fout:
 
-        for idx, line in enumerate(f):
+        with open(input_file, "r", encoding="utf-8") as fin:
 
-            tokens = tokenizer.encode(
-                line,
-                allowed_special={
-                    "<|endoftext|>"
-                }
-            )
+            for idx, line in enumerate(fin):
 
-            token_buffer.extend(tokens)
+                tokens = tokenizer.encode(
+                    line,
+                    allowed_special={"<|endoftext|>"}
+                )
 
-            # Write periodically to avoid huge memory usage
-            if len(token_buffer) >= 1_000_000:
+                token_buffer.extend(tokens)
+
+                if len(token_buffer) >= 1_000_000:
+
+                    np.array(
+                        token_buffer,
+                        dtype=np.uint16
+                    ).tofile(fout)
+
+                    total_tokens += len(token_buffer)
+                    token_buffer = []
+
+                if idx % 100000 == 0:
+                    print(f"Processed {idx:,} stories")
+
+            if token_buffer:
 
                 np.array(
                     token_buffer,
                     dtype=np.uint16
-                ).tofile(
-                    output_file
-                )
+                ).tofile(fout)
 
                 total_tokens += len(token_buffer)
-                token_buffer = []
-
-            if idx % 100000 == 0:
-                print(
-                    f"Processed {idx:,} stories"
-                )
-
-
-    # Save remaining tokens
-    if token_buffer:
-
-        np.array(
-            token_buffer,
-            dtype=np.uint16
-        ).tofile(
-            output_file
-        )
-
-        total_tokens += len(token_buffer)
-
 
     print(f"Saved: {output_file}")
     print(f"Total tokens: {total_tokens:,}")
-
 
     return total_tokens
 
