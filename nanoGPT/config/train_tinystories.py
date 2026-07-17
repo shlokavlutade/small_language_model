@@ -1,6 +1,6 @@
 # Output
 experiment = "baseline" 
-out_dir = f"/content/drive/MyDrive/thesis_data/results/{experiment}"
+out_dir = f"/kaggle/working/results/{experiment}"
 
 # Evaluation
 # Final baseline:

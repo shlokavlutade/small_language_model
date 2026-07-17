@@ -92,7 +92,7 @@ def duplicate_dataset( dataset, duplicate_ratio, seed=DEFAULT_SEED):
     ).shuffle(seed=seed)
 
     print(f"Duplication Applied: ", f"{len(unique_dataset)} unique and ",
-          f"{len(duplicate_dataset)} duplicates")
+          f"{len(duplicate_samples)} duplicates")
     
     return combined_dataset
 
