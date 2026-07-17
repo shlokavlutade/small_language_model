@@ -17,7 +17,7 @@ log_interval = 10
 
 
 # Dataset
-dataset = f"tinystories_{experiment}"
+dataset = f"{experiment}"
 
 
 # Model architecture
