@@ -1,6 +1,6 @@
 # Output
 experiment = "baseline" 
-out_dir = f"/kaggle/working/results/{experiment}"
+out_dir= f"/kaggle/working/training-results/{experiment}"
 
 # Evaluation
 # Final baseline:
