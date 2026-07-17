@@ -221,11 +221,19 @@ def save_dataset_to_txt(
         train_dataset,
         val_dataset
 ):
+    """
+    Save processed dataset into temporary txt files
+    for GPT-2 tokenization.
+
+    Each story is cleaned and followed by <|endoftext|>.
+    """
 
     TEMP_DIR.mkdir(
         parents=True,
         exist_ok=True
     )
+
+    print("\nCreating training txt file...")
 
     with open(
         TRAIN_TXT,
@@ -233,17 +241,32 @@ def save_dataset_to_txt(
         encoding="utf-8"
     ) as f:
 
-        for story in train_dataset["text"]:
+        for idx, story in enumerate(train_dataset["text"]):
 
             clean_story = " ".join(
                 str(story).split()
             )
 
+            # Debug first story only
+            if idx == 0:
+                print("\n--- ORIGINAL STORY ---")
+                print(repr(story[:300]))
+
+                print("\n--- CLEANED STORY ---")
+                print(repr(clean_story[:300]))
+
+
             f.write(
                 clean_story
-                + "\n<|endoftext|>\n"
+                +
+                "\n<|endoftext|>\n"
             )
 
+
+    print("Training txt created:", TRAIN_TXT)
+
+
+    print("\nCreating validation txt file...")
 
     with open(
         VAL_TXT,
@@ -259,11 +282,13 @@ def save_dataset_to_txt(
 
             f.write(
                 clean_story
-                + "\n<|endoftext|>\n"
+                +
+                "\n<|endoftext|>\n"
             )
 
 
-    print("Temporary text files created.")
+    print("Validation txt created:", VAL_TXT)
+
 
     return TRAIN_TXT, VAL_TXT
 
