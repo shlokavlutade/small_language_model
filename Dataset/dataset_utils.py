@@ -237,7 +237,7 @@ def save_dataset_to_txt(
         for story in train_dataset["text"]:
 
             f.write(
-                story.strip()
+                " ".join(story.strip().split())
                 +
                 "\n<|endoftext|>\n"
             )
@@ -252,11 +252,10 @@ def save_dataset_to_txt(
         for story in val_dataset["text"]:
 
             f.write(
-                story.strip()
+                " ".join(story.strip().split())
                 +
                 "\n<|endoftext|>\n"
             )
-
 
     print("Temporary text files created.")
 
