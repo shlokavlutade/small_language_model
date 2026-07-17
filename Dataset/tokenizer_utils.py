@@ -39,10 +39,12 @@ def tokenize_file(input_file, output_file):
 
                 if len(token_buffer) >= 1_000_000:
 
-                    np.array(
+                    arr = np.array(
                         token_buffer,
                         dtype=np.uint16
-                    ).tofile(fout)
+                    )
+
+                    fout.write(arr.tobytes())
 
                     total_tokens += len(token_buffer)
                     token_buffer = []
@@ -52,10 +54,12 @@ def tokenize_file(input_file, output_file):
 
             if token_buffer:
 
-                np.array(
+                arr = np.array(
                     token_buffer,
                     dtype=np.uint16
-                ).tofile(fout)
+                )
+
+                fout.write(arr.tobytes())
 
                 total_tokens += len(token_buffer)
 
