@@ -259,7 +259,7 @@ def save_dataset_to_txt(
             f.write(
                 clean_story
                 +
-                "\n<|endoftext|>\n"
+                "<|endoftext|>\n"
             )
 
 
@@ -283,7 +283,7 @@ def save_dataset_to_txt(
             f.write(
                 clean_story
                 +
-                "\n<|endoftext|>\n"
+                "<|endoftext|>\n"
             )
 
 
