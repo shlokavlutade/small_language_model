@@ -87,9 +87,9 @@ def duplicate_dataset( dataset, duplicate_ratio, seed=DEFAULT_SEED):
     )
 
     combined_dataset = Dataset.from_dict(
-        {"text":
-        unique_dataset["text"] + duplicate_samples["text"]}
-    ).shuffle(seed=seed)
+    {
+        "text":list(unique_dataset["text"]) + list(duplicate_samples["text"])
+    }).shuffle(seed=seed)
 
     print(f"Duplication Applied: ", f"{len(unique_dataset)} unique and ",
           f"{len(duplicate_samples)} duplicates")
