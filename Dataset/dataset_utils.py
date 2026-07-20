@@ -143,7 +143,7 @@ def shuffle_story_sentences(
     )
 
 
-    modified_texts = list(dataset["text"])
+    modified_texts = [example["text"] for example in dataset]
 
 
     for idx in indices:
