@@ -117,7 +117,7 @@ ctx = nullcontext() if device_type == 'cpu' else torch.amp.autocast(device_type=
 
 # poor man's data loader
 data_dir = os.path.join(
-    "/kaggle/input/tinystories-thesis-dataset/tinystories-thesis-dataset",
+    "/kaggle/input/datasets/shlokavlutade/tinystories-thesis-dataset/tinystories-thesis-dataset",
     dataset
 )
 def get_batch(split):
