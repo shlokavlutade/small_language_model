@@ -84,9 +84,9 @@ def duplicate_dataset(dataset, duplicate_ratio, seed=DEFAULT_SEED):
         # Step 2: Select 25% of total dataset from remaining data
         duplicate_count = int(dataset_size * 0.25)
 
-        duplicate_indices = random.sample(
-            remaining_indices,
-            duplicate_count
+        duplicate_indices = random.choices(
+            unique_indices,
+            k=duplicate_count
         )
 
 
