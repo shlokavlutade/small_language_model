@@ -50,50 +50,118 @@ def reduce_dataset(dataset, fraction: float, seed=DEFAULT_SEED):
     
     return reduced_dataset
 
-def duplicate_dataset( dataset, duplicate_ratio, seed=DEFAULT_SEED):
-    """ 
-    Apply duplication while keeping the final dataset size same
+def duplicate_dataset(dataset, duplicate_ratio, seed=DEFAULT_SEED):
     """
+    duplicate_ratio:
+        0.5 -> keep 50% unique + duplicate 25%
+        1.0 -> keep 50% unique + duplicate the same 50%
+    """
+
     if duplicate_ratio == 0:
         return dataset
-    
+
     random.seed(seed)
 
     dataset_size = len(dataset)
 
+    all_indices = list(range(dataset_size))
+
     if duplicate_ratio == 0.5:
-        unique_count = int(dataset_size * 0.75)
+
+        # Step 1: Keep 50% unique data
+        unique_count = int(dataset_size * 0.5)
+
+        unique_indices = random.sample(
+            all_indices,
+            unique_count
+        )
+
+        remaining_indices = list(
+            set(all_indices) - set(unique_indices)
+        )
+
+
+        # Step 2: Select 25% of total dataset from remaining data
+        duplicate_count = int(dataset_size * 0.25)
+
+        duplicate_indices = random.sample(
+            remaining_indices,
+            duplicate_count
+        )
+
+
+        unique_dataset = dataset.select(
+            unique_indices
+        )
+
+        duplicate_samples = dataset.select(
+            duplicate_indices
+        )
+
+
+        # Step 3: Merge unique + duplicate copies
+        combined_dataset = Dataset.from_dict(
+            {
+                "text":
+                list(unique_dataset["text"])
+                +
+                list(duplicate_samples["text"])
+            }
+        )
+
 
     elif duplicate_ratio == 1.0:
-        unique_count = int(dataset_size * 0.50)
+
+        # Select 50% of dataset
+        selected_count = int(dataset_size * 0.5)
+
+        selected_indices = random.sample(
+            all_indices,
+            selected_count
+        )
+
+
+        selected_dataset = dataset.select(
+            selected_indices
+        )
+
+
+        # Duplicate selected 50%
+        combined_dataset = Dataset.from_dict(
+            {
+                "text":
+                list(selected_dataset["text"])
+                +
+                list(selected_dataset["text"])
+            }
+        )
+
 
     else:
-        raise ValueError(" Allowed duplication ratios: 0, 0.5, 1.0")
-    
-    unique_indices = random.sample(
-        range(dataset_size), unique_count)
+        raise ValueError(
+            "Allowed duplication ratios: 0, 0.5, 1.0"
+        )
 
-    duplicate_count = dataset_size - unique_count
 
-    unique_dataset = dataset.select(unique_indices)
-
-    duplicate_indices = random.choices(
-        unique_indices,
-        k= duplicate_count
+    # Shuffle final dataset order
+    combined_dataset = combined_dataset.shuffle(
+        seed=seed
     )
 
-    duplicate_samples = dataset.select(
-        duplicate_indices
+
+    print(
+        f"Duplication {duplicate_ratio} applied"
     )
 
-    combined_dataset = Dataset.from_dict(
-    {
-        "text":list(unique_dataset["text"]) + list(duplicate_samples["text"])
-    }).shuffle(seed=seed)
+    print(
+        f"Final dataset size: {len(combined_dataset)}"
+    )
 
-    print(f"Duplication Applied: ", f"{len(unique_dataset)} unique and ",
-          f"{len(duplicate_samples)} duplicates")
-    
+    print(
+        f"Unique stories: {len(set(combined_dataset['text']))}"
+    )
+
+
     return combined_dataset
 
 def split_sentences(text):
