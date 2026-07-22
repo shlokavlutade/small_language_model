@@ -26,9 +26,7 @@ def prepare_dataset(
     original_train_size = len(train_dataset)
     validation_size = len(val_dataset)
 
-    # Remove natural duplicates first
     seen = set()
-
     def keep_unique(example):
         text = example["text"]
         if text in seen:
@@ -62,7 +60,7 @@ def prepare_dataset(
                     val_bin=token_stats["val_bin"],
                     seed=seed)
     
-    # cleanup_temp_files()
+    cleanup_temp_files()
 
     print("Dataset preparation completed.")
 

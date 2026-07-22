@@ -6,7 +6,7 @@ from .config import TOKENIZER_NAME
 
 
 def get_tokenizer():
-    """Load GPT-2 tokenizer using tiktoken"""
+    """GPT-2 tokenizer using tiktoken"""
     
     tokenizer = tiktoken.get_encoding(TOKENIZER_NAME)
     return tokenizer
@@ -82,7 +82,6 @@ def create_bin_files(
         parents=True,
         exist_ok=True
     )
-
 
     train_bin = output_dir / "train.bin"
     val_bin = output_dir / "val.bin"

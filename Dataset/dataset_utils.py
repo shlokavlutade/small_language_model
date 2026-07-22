@@ -53,8 +53,8 @@ def reduce_dataset(dataset, fraction: float, seed=DEFAULT_SEED):
 def duplicate_dataset(dataset, duplicate_ratio, seed=DEFAULT_SEED):
     """
     duplicate_ratio:
-        0.5 -> keep 50% unique + duplicate 25%
-        1.0 -> keep 50% unique + duplicate the same 50%
+        0.5 -> 50% dup -> 75% unique + 25% of 75 % duplicate 
+        1.0 -> 100% dup ->  keep 50% unique + duplicate the same 50%
     """
 
     if duplicate_ratio == 0:
@@ -68,65 +68,46 @@ def duplicate_dataset(dataset, duplicate_ratio, seed=DEFAULT_SEED):
 
     if duplicate_ratio == 0.5:
 
-        # Step 1: Keep 50% unique data
-        unique_count = int(dataset_size * 0.5)
-
-        unique_indices = random.sample(
-            all_indices,
-            unique_count
-        )
-
-        remaining_indices = list(
-            set(all_indices) - set(unique_indices)
-        )
-
-
-        # Step 2: Select 25% of total dataset from remaining data
-        duplicate_count = int(dataset_size * 0.25)
-
-        duplicate_indices = random.choices(
-            unique_indices,
-            k=duplicate_count
-        )
-
-
-        unique_dataset = dataset.select(
-            unique_indices
-        )
-
-        duplicate_samples = dataset.select(
-            duplicate_indices
-        )
-
-
-        # Step 3: Merge unique + duplicate copies
-        combined_dataset = Dataset.from_dict(
-            {
-                "text":
-                list(unique_dataset["text"])
-                +
-                list(duplicate_samples["text"])
-            }
-        )
-
-
-    elif duplicate_ratio == 1.0:
-
-        # Select 50% of dataset
-        selected_count = int(dataset_size * 0.5)
+        selected_count = int(dataset_size * 0.75)
 
         selected_indices = random.sample(
             all_indices,
             selected_count
         )
 
+        selected_dataset = dataset.select(selected_indices)
 
+        duplicate_count = int(dataset_size * 0.25)
+
+        duplicate_indices = random.sample(
+            range(selected_count),
+            duplicate_count
+        )
+
+        duplicate_dataset = selected_dataset.select(
+            duplicate_indices
+        )
+        
+        combined_dataset = Dataset.from_dict(
+        {
+            "text":
+            list(selected_dataset["text"])
+            +
+            list(duplicate_dataset["text"])
+        })
+
+    elif duplicate_ratio == 1.0:
+
+        selected_count = int(dataset_size * 0.5)
+
+        selected_indices = random.sample(
+            all_indices,
+            selected_count
+        )
         selected_dataset = dataset.select(
             selected_indices
         )
 
-
-        # Duplicate selected 50%
         combined_dataset = Dataset.from_dict(
             {
                 "text":
@@ -136,32 +117,15 @@ def duplicate_dataset(dataset, duplicate_ratio, seed=DEFAULT_SEED):
             }
         )
 
-
     else:
-        raise ValueError(
-            "Allowed duplication ratios: 0, 0.5, 1.0"
-        )
+        raise ValueError("Allowed duplication ratios: 0, 0.5, 1.0")
 
+    combined_dataset = combined_dataset.shuffle(seed=seed)
 
-    # Shuffle final dataset order
-    combined_dataset = combined_dataset.shuffle(
-        seed=seed
-    )
-
-
-    print(
-        f"Duplication {duplicate_ratio} applied"
-    )
-
-    print(
-        f"Final dataset size: {len(combined_dataset)}"
-    )
-
-    print(
-        f"Unique stories: {len(set(combined_dataset['text']))}"
-    )
-
-
+    print(f"Duplication {duplicate_ratio} applied")
+    print(f"Final dataset size: {len(combined_dataset)}")
+    print(f"Unique stories: {len(set(combined_dataset['text']))}")
+    
     return combined_dataset
 
 def split_sentences(text):
@@ -188,8 +152,7 @@ def shuffle_story_sentences(
         seed=DEFAULT_SEED
 ):
     """
-    Randomly shuffle sentences in a percentage
-    of stories.
+    Randomly shuffle sentences in a percentage of stories.
     """
 
     if shuffle_ratio == 0:
@@ -204,12 +167,10 @@ def shuffle_story_sentences(
         dataset_size * shuffle_ratio
     )
 
-
     indices = random.sample(
         range(dataset_size),
         number_to_shuffle
     )
-
 
     modified_texts = [example["text"] for example in dataset]
 
@@ -253,12 +214,7 @@ def prepare_training_dataset(
         seed=DEFAULT_SEED
 ):
     """
-    Complete training dataset transformation pipeline.
-
-    Order:
-        1. Reduce dataset
-        2. Duplicate dataset
-        3. Shuffle sentences
+    Training dataset transformation pipeline
     """
 
     dataset = reduce_dataset(
@@ -291,9 +247,6 @@ def save_dataset_to_txt(
 ):
     """
     Save processed dataset into temporary txt files
-    for GPT-2 tokenization.
-
-    Each story is cleaned and followed by <|endoftext|>.
     """
 
     TEMP_DIR.mkdir(
@@ -309,31 +262,18 @@ def save_dataset_to_txt(
         encoding="utf-8"
     ) as f:
 
-        for idx, story in enumerate(train_dataset["text"]):
+        for story in train_dataset["text"]:
 
             clean_story = " ".join(
                 str(story).split()
             )
-
-            # Debug first story only
-            if idx == 0:
-                print("\n--- ORIGINAL STORY ---")
-                print(repr(story[:300]))
-
-                print("\n--- CLEANED STORY ---")
-                print(repr(clean_story[:300]))
-
-
             f.write(
                 clean_story
                 +
                 "<|endoftext|>\n"
             )
 
-
     print("Training txt created:", TRAIN_TXT)
-
-
     print("\nCreating validation txt file...")
 
     with open(
@@ -353,8 +293,6 @@ def save_dataset_to_txt(
                 +
                 "<|endoftext|>\n"
             )
-
-
     print("Validation txt created:", VAL_TXT)
 
 
